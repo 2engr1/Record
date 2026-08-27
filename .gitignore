@@ -6,4 +6,4 @@ record_main/record.db-*
 dist/
 build/
 *.spec
-
+/User attachment.png
