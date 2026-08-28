@@ -23,6 +23,12 @@
 
     <Resource Include="..\assets\ui\paper-texture.png"
               Link="Assets\UI\paper-texture.png" />
+
+    <Resource Include="..\assets\ui\forest-cat-avatar.png"
+              Link="Assets\UI\forest-cat-avatar.png" />
+
+    <Resource Include="..\assets\ui\forest-cat-home.png"
+              Link="Assets\UI\forest-cat-home.png" />
   </ItemGroup>
 
 </Project>

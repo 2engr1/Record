@@ -8,6 +8,7 @@
         MinHeight="680"
         WindowStartupLocation="CenterScreen"
         Background="#EEDDCB"
+        Loaded="MainWindow_Loaded"
         FontFamily="Microsoft YaHei UI">
 
     <Window.Resources>
@@ -132,6 +133,258 @@
             </Setter>
         </Style>
 
+        <!-- 轻量文字按钮，避免使用系统默认蓝色焦点框 -->
+        <Style x:Key="LinkButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource CoralBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="LinkBorder"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="6"
+                                Padding="3,2">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="LinkBorder" Property="Background" Value="#FFF0E8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 明细表格：GridView 使用同一组列定义，保证表头和每一行严格对齐 -->
+        <Style x:Key="RecordsGridViewHeaderStyle" TargetType="GridViewColumnHeader">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="0,0,0,12"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GridViewColumnHeader">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Left"
+                                              VerticalAlignment="Center"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RecordsTableHeaderTextStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style x:Key="RecordsListViewStyle" TargetType="ListView">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        </Style>
+
+        <Style x:Key="RecordsListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0,15,0,12"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListViewItem">
+                        <Border x:Name="RowBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{StaticResource LineBrush}"
+                                BorderThickness="0,0,0,1"
+                                Padding="{TemplateBinding Padding}">
+                            <GridViewRowPresenter Content="{TemplateBinding Content}"
+                                                  Columns="{Binding View.Columns, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="RowBorder" Property="Background" Value="#FFF9F1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 明细筛选按钮 -->
+        <Style x:Key="FilterChipStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="13,6"/>
+            <Setter Property="Margin" Value="4,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="FilterBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="9"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="FilterBorder" Property="Background" Value="#FFF0E8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ActiveFilterChipStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource FilterChipStyle}">
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Background" Value="{StaticResource CoralBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource CoralBrush}"/>
+        </Style>
+
+        <!-- 明细页类别筛选：沿用纸张下拉风格，避免系统默认蓝色高亮 -->
+        <Style x:Key="FilterComboBoxItemStyle" TargetType="ComboBoxItem">
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Padding" Value="10,7"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBoxItem">
+                        <Border x:Name="ItemBorder"
+                                Background="{TemplateBinding Background}"
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="7">
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              ContentTemplate="{TemplateBinding ContentTemplate}"
+                                              TextElement.Foreground="{TemplateBinding Foreground}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#FFF0E8"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="ItemBorder" Property="Background" Value="#F8E2D6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="FilterComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+            <Setter Property="Background" Value="{StaticResource PaperBrush}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="ItemContainerStyle" Value="{StaticResource FilterComboBoxItemStyle}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ComboBox">
+                        <Grid>
+                            <ToggleButton x:Name="DropDownToggle"
+                                          Focusable="False"
+                                          ClickMode="Press"
+                                          Background="{TemplateBinding Background}"
+                                          BorderBrush="{TemplateBinding BorderBrush}"
+                                          BorderThickness="{TemplateBinding BorderThickness}"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentStringFormat="{TemplateBinding SelectionBoxItemStringFormat}"
+                                          IsChecked="{Binding IsDropDownOpen, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+                                <ToggleButton.Template>
+                                    <ControlTemplate TargetType="ToggleButton">
+                                        <Border x:Name="ToggleBorder"
+                                                Background="{TemplateBinding Background}"
+                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                BorderThickness="{TemplateBinding BorderThickness}"
+                                                CornerRadius="9">
+                                            <Grid>
+                                                <ContentPresenter Margin="{TemplateBinding Padding}"
+                                                                  HorizontalAlignment="Left"
+                                                                  VerticalAlignment="Center"
+                                                                  Content="{TemplateBinding Content}"
+                                                                  ContentTemplate="{TemplateBinding ContentTemplate}"/>
+                                                <TextBlock Text="⌄"
+                                                           Margin="0,0,10,2"
+                                                           HorizontalAlignment="Right"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{StaticResource MutedBrush}"
+                                                           FontSize="15"/>
+                                            </Grid>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="ToggleBorder" Property="Background" Value="#FFF0E8"/>
+                                                <Setter TargetName="ToggleBorder" Property="BorderBrush" Value="{StaticResource CoralBrush}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsChecked" Value="True">
+                                                <Setter TargetName="ToggleBorder" Property="Background" Value="#FFF0E8"/>
+                                                <Setter TargetName="ToggleBorder" Property="BorderBrush" Value="{StaticResource CoralBrush}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </ToggleButton.Template>
+                            </ToggleButton>
+
+                            <Popup x:Name="DropDownPopup"
+                                   AllowsTransparency="True"
+                                   Focusable="False"
+                                   Placement="Bottom"
+                                   VerticalOffset="5"
+                                   IsOpen="{TemplateBinding IsDropDownOpen}"
+                                   PopupAnimation="Fade">
+                                <Border MinWidth="135"
+                                        Background="{StaticResource PaperBrush}"
+                                        BorderBrush="{StaticResource LineBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="10"
+                                        Padding="5"
+                                        Effect="{StaticResource CardShadow}">
+                                    <ScrollViewer MaxHeight="230"
+                                                  CanContentScroll="True"
+                                                  VerticalScrollBarVisibility="Auto">
+                                        <ItemsPresenter/>
+                                    </ScrollViewer>
+                                </Border>
+                            </Popup>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- 卡片阴影 -->
         <DropShadowEffect x:Key="CardShadow"
                           BlurRadius="16"
@@ -173,12 +426,11 @@
                     <Grid>
 
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="104"/>
+                            <RowDefinition Height="88"/>
                             <RowDefinition Height="*"/>
-                            <RowDefinition Height="78"/>
                         </Grid.RowDefinitions>
 
-                        <!-- Logo 占位 -->
+                        <!-- 简洁 Logo -->
                         <Border Grid.Row="0"
                                 Width="52"
                                 Height="52"
@@ -187,22 +439,25 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
 
-                            <Image Source="/Record.Desktop;component/Assets/UI/forest-cat.png"
-                                Width="45"
-                                Height="45"
-                                Stretch="Uniform"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"/>
+                            <TextBlock Text="R"
+                                       Foreground="#FFF8EE"
+                                       FontFamily="Georgia"
+                                       FontSize="28"
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"/>
                         </Border>
 
                         <!-- 四个必要页面 -->
                         <StackPanel Grid.Row="1"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Top">
+                                    VerticalAlignment="Center">
 
-                            <Button Style="{StaticResource ActiveNavButtonStyle}"
+                            <Button x:Name="HomeNavButton"
+                                    Style="{StaticResource ActiveNavButtonStyle}"
                                     ToolTip="首页"
-                                    AutomationProperties.Name="首页">
+                                    AutomationProperties.Name="首页"
+                                    Click="HomeNavButton_Click">
                                 <Path Data="{StaticResource HomeIcon}"
                                       Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}},
                                                      Path=Foreground}"
@@ -211,9 +466,11 @@
                                       Stretch="Uniform"/>
                             </Button>
 
-                            <Button Style="{StaticResource NavButtonStyle}"
+                            <Button x:Name="RecordsNavButton"
+                                    Style="{StaticResource NavButtonStyle}"
                                     ToolTip="记账"
-                                    AutomationProperties.Name="记账">
+                                    AutomationProperties.Name="记账"
+                                    Click="RecordsNavButton_Click">
                                 <Path Data="{StaticResource RecordIcon}"
                                       Stroke="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}},
                                                       Path=Foreground}"
@@ -250,19 +507,12 @@
 
                         </StackPanel>
 
-                        <!-- 底部装饰 -->
-                        <TextBlock Grid.Row="2"
-                                   Text="✦"
-                                   Foreground="{StaticResource GoldBrush}"
-                                   FontSize="22"
-                                   HorizontalAlignment="Center"
-                                   VerticalAlignment="Center"/>
-
                     </Grid>
                 </Border>
 
                 <!-- 右侧主内容区域 -->
-                <ScrollViewer Grid.Column="1"
+                <Grid Grid.Column="1">
+                <ScrollViewer x:Name="HomePage"
                               VerticalScrollBarVisibility="Auto"
                               HorizontalScrollBarVisibility="Disabled">
 
@@ -298,7 +548,8 @@
                             <Button Grid.Column="1"
                                     Content="＋ 记一笔"
                                     Style="{StaticResource PrimaryButtonStyle}"
-                                    VerticalAlignment="Center"/>
+                                    VerticalAlignment="Center"
+                                    Click="AddRecordButton_Click"/>
                         </Grid>
 
                         <!-- 四个统计卡片 -->
@@ -337,7 +588,8 @@
                                                    Foreground="{StaticResource InkBrush}"
                                                    FontSize="14"/>
 
-                                        <TextBlock Text="¥ 12,345.67"
+                                        <TextBlock x:Name="TotalExpenseTextBlock"
+                                                   Text="¥ 0.00"
                                                    Margin="0,9,0,0"
                                                    Foreground="{StaticResource CoralBrush}"
                                                    FontSize="25"
@@ -380,7 +632,8 @@
                                                    Foreground="{StaticResource InkBrush}"
                                                    FontSize="14"/>
 
-                                        <TextBlock Text="¥ 18,765.43"
+                                        <TextBlock x:Name="TotalIncomeTextBlock"
+                                                   Text="¥ 0.00"
                                                    Margin="0,9,0,0"
                                                    Foreground="{StaticResource GreenBrush}"
                                                    FontSize="25"
@@ -422,13 +675,15 @@
                                                    Foreground="{StaticResource InkBrush}"
                                                    FontSize="14"/>
 
-                                        <TextBlock Text="¥ 2,345.67"
+                                        <TextBlock x:Name="MonthExpenseTextBlock"
+                                                   Text="¥ 0.00"
                                                    Margin="0,8,0,0"
                                                    Foreground="{StaticResource CoralBrush}"
                                                    FontSize="21"
                                                    FontWeight="Bold"/>
 
-                                        <TextBlock Text="2026 年 8 月"
+                                        <TextBlock x:Name="MonthExpenseLabelTextBlock"
+                                                   Text="本月"
                                                    Margin="0,5,0,0"
                                                    Foreground="{StaticResource MutedBrush}"
                                                    FontSize="12"/>
@@ -463,13 +718,15 @@
                                                    Foreground="{StaticResource InkBrush}"
                                                    FontSize="14"/>
 
-                                        <TextBlock Text="¥ 4,321.00"
+                                        <TextBlock x:Name="MonthIncomeTextBlock"
+                                                   Text="¥ 0.00"
                                                    Margin="0,8,0,0"
                                                    Foreground="{StaticResource GreenBrush}"
                                                    FontSize="21"
                                                    FontWeight="Bold"/>
 
-                                        <TextBlock Text="2026 年 8 月"
+                                        <TextBlock x:Name="MonthIncomeLabelTextBlock"
+                                                   Text="本月"
                                                    Margin="0,5,0,0"
                                                    Foreground="{StaticResource MutedBrush}"
                                                    FontSize="12"/>
@@ -494,150 +751,345 @@
                                        FontSize="19"
                                        FontWeight="SemiBold"/>
 
-                            <TextBlock Text="查看全部  ›"
+                            <Button Content="查看全部  ›"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    FontSize="13"
+                                    Style="{StaticResource LinkButtonStyle}"
+                                    Click="RecordsNavButton_Click"/>
+                        </Grid>
+
+                        <!-- 最近记录列表 -->
+                        <Grid Grid.Row="3"
+                              VerticalAlignment="Top">
+
+                            <Grid VerticalAlignment="Top">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="250"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- 独立的首页角色卡，不属于最近记录表格 -->
+                                <Border Grid.Column="0"
+                                        Margin="0,0,22,0"
+                                        Background="#F1E5D3"
+                                        BorderBrush="#D7BE9C"
+                                        BorderThickness="1"
+                                        CornerRadius="22"
+                                        Padding="9"
+                                        Height="286"
+                                        VerticalAlignment="Top">
+                                    <Grid ClipToBounds="True">
+                                        <Image Width="220"
+                                               Height="220"
+                                               Source="/Record.Desktop;component/Assets/UI/forest-cat-home.png"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Top"/>
+                                        <Border HorizontalAlignment="Left"
+                                                VerticalAlignment="Bottom"
+                                                Margin="12"
+                                                Padding="9,5"
+                                                Background="#EAF0DF"
+                                                BorderBrush="#C2CEA5"
+                                                BorderThickness="1"
+                                                CornerRadius="9">
+                                            <TextBlock Text="林间小记"
+                                                       Foreground="#526342"
+                                                       FontFamily="Georgia"
+                                                       FontSize="15"
+                                                       FontWeight="SemiBold"/>
+                                        </Border>
+                                    </Grid>
+                                </Border>
+
+                            <Border Grid.Column="1"
+                                    Background="{StaticResource CardBrush}"
+                                    BorderBrush="{StaticResource LineBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="18"
+                                    Padding="18"
+                                    VerticalAlignment="Top">
+                            <ListView x:Name="HomeRecordsListView"
+                                      ItemsSource="{Binding RecentRecords}"
+                                      Style="{StaticResource RecordsListViewStyle}"
+                                      ItemContainerStyle="{StaticResource RecordsListViewItemStyle}"
+                                      SizeChanged="RecordsListView_SizeChanged">
+                                <ListView.View>
+                                    <GridView ColumnHeaderContainerStyle="{StaticResource RecordsGridViewHeaderStyle}">
+                                        <GridViewColumn x:Name="HomeDescriptionColumn" Header="说明" Width="195">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Description}"
+                                                               Foreground="{StaticResource InkBrush}"
+                                                               FontSize="14"
+                                                               TextAlignment="Left"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn x:Name="HomeCategoryColumn" Header="类别" Width="110">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Category}"
+                                                               Foreground="{StaticResource MutedBrush}"
+                                                               FontSize="13"
+                                                               TextAlignment="Left"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn x:Name="HomeDateColumn" Header="日期" Width="95">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding DisplayDate}"
+                                                               Foreground="{StaticResource MutedBrush}"
+                                                               FontSize="13"
+                                                               TextAlignment="Left"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn x:Name="HomeAmountColumn" Header="金额" Width="135">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding DisplayAmount}"
+                                                               Foreground="{Binding AmountBrush}"
+                                                               FontSize="14"
+                                                               TextAlignment="Left"
+                                                               FontWeight="SemiBold"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                            </Border>
+                            </Grid>
+                        </Grid>
+
+                    </Grid>
+                </ScrollViewer>
+
+                <!-- 记账明细页 -->
+                <Grid x:Name="RecordsPage"
+                      Visibility="Collapsed"
+                      ClipToBounds="True">
+                    <Grid Margin="34,28,34,34">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="记账"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontFamily="Georgia"
+                                           FontSize="30"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="每一笔记录，都让生活更有把握"
+                                           Margin="0,6,0,0"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="13"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Content="＋ 记一笔"
+                                    Style="{StaticResource PrimaryButtonStyle}"
+                                    VerticalAlignment="Center"
+                                    Click="AddRecordButton_Click"/>
+                        </Grid>
+
+                        <Border Grid.Row="1"
+                                Margin="0,28,0,0"
+                                Padding="18"
+                                Background="#FFF3E8"
+                                BorderBrush="#EDB09C"
+                                BorderThickness="1"
+                                CornerRadius="18">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="记录数量"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"/>
+                                    <TextBlock x:Name="RecordsCountTextBlock"
+                                               Text="0 笔"
+                                               Margin="0,6,0,0"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontSize="22"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="支出合计"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"/>
+                                    <TextBlock x:Name="RecordsExpenseTextBlock"
+                                               Text="¥ 0.00"
+                                               Margin="0,6,0,0"
+                                               Foreground="{StaticResource CoralBrush}"
+                                               FontSize="22"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="收入合计"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"/>
+                                    <TextBlock x:Name="RecordsIncomeTextBlock"
+                                               Text="¥ 0.00"
+                                               Margin="0,6,0,0"
+                                               Foreground="{StaticResource GreenBrush}"
+                                               FontSize="22"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="2"
+                                Margin="0,22,0,0"
+                                Padding="10,8"
+                                Background="{StaticResource CardBrush}"
+                                BorderBrush="{StaticResource LineBrush}"
+                                BorderThickness="1"
+                                CornerRadius="14">
+                            <StackPanel Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <TextBlock Text="快速筛选"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"
+                                           Margin="4,0,8,0"/>
+                                <Button x:Name="AllRecordsFilterButton"
+                                        Content="全部"
+                                        Style="{StaticResource ActiveFilterChipStyle}"
+                                        Click="AllRecordsFilterButton_Click"/>
+                                <Button x:Name="CurrentMonthFilterButton"
+                                        Content="本月"
+                                        Style="{StaticResource FilterChipStyle}"
+                                        Click="CurrentMonthFilterButton_Click"/>
+                                <Button x:Name="ExpenseFilterButton"
+                                        Content="支出"
+                                        Style="{StaticResource FilterChipStyle}"
+                                        Click="ExpenseFilterButton_Click"/>
+                                <Button x:Name="IncomeFilterButton"
+                                        Content="收入"
+                                        Style="{StaticResource FilterChipStyle}"
+                                        Click="IncomeFilterButton_Click"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Grid Grid.Row="3" Margin="0,24,0,12">
+                            <TextBlock Text="记录明细"
+                                       Foreground="{StaticResource InkBrush}"
+                                       FontSize="19"
+                                       FontWeight="SemiBold"/>
+                            <TextBlock Text="按时间排列"
                                        HorizontalAlignment="Right"
-                                       Foreground="{StaticResource CoralBrush}"
+                                       Foreground="{StaticResource MutedBrush}"
                                        FontSize="13"
                                        VerticalAlignment="Center"/>
                         </Grid>
 
-                        <!-- 最近记录列表 -->
-                        <Border Grid.Row="3"
-                                Background="{StaticResource CardBrush}"
-                                BorderBrush="{StaticResource LineBrush}"
-                                BorderThickness="1"
-                                CornerRadius="18"
-                                Padding="18">
+                        <Grid Grid.Row="4">
+                            <Border Background="{StaticResource CardBrush}"
+                                    BorderBrush="{StaticResource LineBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="18"
+                                    Padding="18"
+                                    Height="360"
+                                    VerticalAlignment="Top">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                    </Grid.RowDefinitions>
 
-                            <StackPanel>
+                                    <!-- 固定列定义的表头 -->
+                                    <Grid Grid.Row="0" Margin="0,0,0,4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2.3*"/>
+                                            <ColumnDefinition Width="1.2*"/>
+                                            <ColumnDefinition Width="1.5*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1.3*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0"
+                                                   Text="说明"
+                                                   Style="{StaticResource RecordsTableHeaderTextStyle}"/>
+                                        <TextBlock Grid.Column="1"
+                                                   Text="类别"
+                                                   Style="{StaticResource RecordsTableHeaderTextStyle}"/>
+                                        <TextBlock Grid.Column="2"
+                                                   Text="支付方式"
+                                                   Style="{StaticResource RecordsTableHeaderTextStyle}"/>
+                                        <TextBlock Grid.Column="3"
+                                                   Text="日期"
+                                                   Style="{StaticResource RecordsTableHeaderTextStyle}"/>
+                                        <TextBlock Grid.Column="4"
+                                                   Text="金额"
+                                                   Style="{StaticResource RecordsTableHeaderTextStyle}"/>
+                                    </Grid>
 
-                                <!-- 表头 -->
-                                <Grid Margin="0,0,0,12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Text="说明"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="12"/>
-
-                                    <TextBlock Grid.Column="1"
-                                               Text="类别"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="12"/>
-
-                                    <TextBlock Grid.Column="2"
-                                               Text="日期"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="12"/>
-
-                                    <TextBlock Grid.Column="3"
-                                               Text="金额"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="12"/>
+                                    <ScrollViewer Grid.Row="1"
+                                                  VerticalScrollBarVisibility="Auto"
+                                                  HorizontalScrollBarVisibility="Disabled">
+                                        <ItemsControl ItemsSource="{Binding RecordsView}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border BorderBrush="{StaticResource LineBrush}"
+                                                            BorderThickness="0,0,0,1"
+                                                            Padding="0,13,0,11">
+                                                        <Grid>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="2.3*"/>
+                                                                <ColumnDefinition Width="1.2*"/>
+                                                                <ColumnDefinition Width="1.5*"/>
+                                                                <ColumnDefinition Width="1*"/>
+                                                                <ColumnDefinition Width="1.3*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <TextBlock Grid.Column="0"
+                                                                       Text="{Binding Description}"
+                                                                       Foreground="{StaticResource InkBrush}"
+                                                                       FontSize="14"
+                                                                       TextTrimming="CharacterEllipsis"/>
+                                                            <TextBlock Grid.Column="1"
+                                                                       Text="{Binding Category}"
+                                                                       Foreground="{StaticResource MutedBrush}"
+                                                                       FontSize="13"/>
+                                                            <TextBlock Grid.Column="2"
+                                                                       Text="{Binding PaymentMethod}"
+                                                                       Foreground="{StaticResource MutedBrush}"
+                                                                       FontSize="13"/>
+                                                            <TextBlock Grid.Column="3"
+                                                                       Text="{Binding DisplayDate}"
+                                                                       Foreground="{StaticResource MutedBrush}"
+                                                                       FontSize="13"/>
+                                                            <TextBlock Grid.Column="4"
+                                                                       Text="{Binding DisplayAmount}"
+                                                                       Foreground="{Binding AmountBrush}"
+                                                                       FontSize="14"
+                                                                       FontWeight="SemiBold"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
                                 </Grid>
-
-                                <Rectangle Height="1"
-                                           Fill="{StaticResource LineBrush}"/>
-
-                                <!-- 记录 1 -->
-                                <Grid Margin="0,15,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Text="午餐 · 拉面"
-                                               Foreground="{StaticResource InkBrush}"
-                                               FontSize="14"/>
-
-                                    <TextBlock Grid.Column="1"
-                                               Text="餐饮"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="13"/>
-
-                                    <TextBlock Grid.Column="2"
-                                               Text="今天"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="13"/>
-
-                                    <TextBlock Grid.Column="3"
-                                               Text="- ¥ 28.00"
-                                               Foreground="{StaticResource CoralBrush}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"/>
-                                </Grid>
-
-                                <!-- 记录 2 -->
-                                <Grid Margin="0,15,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Text="地铁通勤"
-                                               Foreground="{StaticResource InkBrush}"
-                                               FontSize="14"/>
-
-                                    <TextBlock Grid.Column="1"
-                                               Text="交通"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="13"/>
-
-                                    <TextBlock Grid.Column="2"
-                                               Text="昨天"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="13"/>
-
-                                    <TextBlock Grid.Column="3"
-                                               Text="- ¥ 6.00"
-                                               Foreground="{StaticResource CoralBrush}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"/>
-                                </Grid>
-
-                                <!-- 记录 3 -->
-                                <Grid Margin="0,15,0,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="2*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-
-                                    <TextBlock Text="八月工资"
-                                               Foreground="{StaticResource InkBrush}"
-                                               FontSize="14"/>
-
-                                    <TextBlock Grid.Column="1"
-                                               Text="工资"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="13"/>
-
-                                    <TextBlock Grid.Column="2"
-                                               Text="08-01"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="13"/>
-
-                                    <TextBlock Grid.Column="3"
-                                               Text="+ ¥ 18,000.00"
-                                               Foreground="{StaticResource GreenBrush}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"/>
-                                </Grid>
-
-                            </StackPanel>
                         </Border>
-
                     </Grid>
-                </ScrollViewer>
+                    </Grid>
+                </Grid>
+                </Grid>
 
             </Grid>
         </Border>
