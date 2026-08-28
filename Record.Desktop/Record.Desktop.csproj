@@ -8,4 +8,21 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Resource Include="..\assets\ui\forest-cat.png"
+              Link="Assets\UI\forest-cat.png" />
+
+    <Resource Include="..\assets\ui\forest-cat-states.png"
+              Link="Assets\UI\forest-cat-states.png" />
+
+    <Resource Include="..\assets\ui\decorations-sheet.png"
+              Link="Assets\UI\decorations-sheet.png" />
+
+    <Resource Include="..\assets\ui\category-icons-sheet.png"
+              Link="Assets\UI\category-icons-sheet.png" />
+
+    <Resource Include="..\assets\ui\paper-texture.png"
+              Link="Assets\UI\paper-texture.png" />
+  </ItemGroup>
+
 </Project>

@@ -128,10 +128,18 @@
 
             <Grid>
 
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="86"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+
+                
+                <!-- 页面纸张纹理 -->
+                <Image Source="/Record.Desktop;component/Assets/UI/paper-texture.png"
+                    Stretch="UniformToFill"
+                    Opacity="0.16"
+                    IsHitTestVisible="False"/>
 
                 <!-- 左侧深色图标导航栏 -->
                 <Border Grid.Column="0"
@@ -155,13 +163,12 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center">
 
-                            <TextBlock Text="R"
-                                       Foreground="#FFF8EE"
-                                       FontFamily="Georgia"
-                                       FontSize="28"
-                                       FontWeight="Bold"
-                                       HorizontalAlignment="Center"
-                                       VerticalAlignment="Center"/>
+                            <Image Source="/Record.Desktop;component/Assets/UI/forest-cat.png"
+                                Width="45"
+                                Height="45"
+                                Stretch="Uniform"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
                         </Border>
 
                         <!-- 四个必要页面 -->
