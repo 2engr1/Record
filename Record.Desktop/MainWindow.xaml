@@ -12,6 +12,30 @@
 
     <Window.Resources>
 
+        <!-- 导航图标 -->
+        <Geometry x:Key="HomeIcon">
+            M12,3 L21,10 V21 H15 V15 H9 V21 H3 V10 Z
+        </Geometry>
+
+        <Geometry x:Key="RecordIcon">
+            M5,3 H19 V21 H5 Z
+            M8,8 H16
+            M8,12 H16
+            M8,16 H14
+        </Geometry>
+
+        <Geometry x:Key="ImportIcon">
+            M12,4 V16
+            M7,11 L12,16 L17,11
+            M5,19 H19 V22 H5 Z
+        </Geometry>
+
+        <Geometry x:Key="AnalyticsIcon">
+            M4,20 V13 H8 V20 Z
+            M10,20 V8 H14 V20 Z
+            M16,20 V4 H20 V20 Z
+        </Geometry>
+
         <!-- 全局颜色 -->
         <SolidColorBrush x:Key="PageBrush" Color="#EEDDCB"/>
         <SolidColorBrush x:Key="PaperBrush" Color="#FFF8EE"/>
@@ -134,7 +158,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                
+
                 <!-- 页面纸张纹理 -->
                 <Image Source="/Record.Desktop;component/Assets/UI/paper-texture.png"
                     Stretch="UniformToFill"
@@ -179,33 +203,49 @@
                             <Button Style="{StaticResource ActiveNavButtonStyle}"
                                     ToolTip="首页"
                                     AutomationProperties.Name="首页">
-                                <TextBlock Text="⌂"
-                                           FontFamily="Segoe UI Symbol"
-                                           FontSize="29"/>
+                                <Path Data="{StaticResource HomeIcon}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}},
+                                                     Path=Foreground}"
+                                      Width="25"
+                                      Height="25"
+                                      Stretch="Uniform"/>
                             </Button>
 
                             <Button Style="{StaticResource NavButtonStyle}"
                                     ToolTip="记账"
                                     AutomationProperties.Name="记账">
-                                <TextBlock Text="▤"
-                                           FontFamily="Segoe UI Symbol"
-                                           FontSize="24"/>
+                                <Path Data="{StaticResource RecordIcon}"
+                                      Stroke="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}},
+                                                      Path=Foreground}"
+                                      StrokeThickness="2"
+                                      Fill="Transparent"
+                                      Width="25"
+                                      Height="25"
+                                      Stretch="Uniform"/>
                             </Button>
 
                             <Button Style="{StaticResource NavButtonStyle}"
                                     ToolTip="导入"
                                     AutomationProperties.Name="导入">
-                                <TextBlock Text="⇧"
-                                           FontFamily="Segoe UI Symbol"
-                                           FontSize="27"/>
+                                <Path Data="{StaticResource ImportIcon}"
+                                      Stroke="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}},
+                                                      Path=Foreground}"
+                                      StrokeThickness="2"
+                                      Fill="Transparent"
+                                      Width="25"
+                                      Height="25"
+                                      Stretch="Uniform"/>
                             </Button>
 
                             <Button Style="{StaticResource NavButtonStyle}"
                                     ToolTip="分析"
                                     AutomationProperties.Name="分析">
-                                <TextBlock Text="◒"
-                                           FontFamily="Segoe UI Symbol"
-                                           FontSize="25"/>
+                                <Path Data="{StaticResource AnalyticsIcon}"
+                                      Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}},
+                                                      Path=Foreground}"
+                                      Width="25"
+                                      Height="25"
+                                      Stretch="Uniform"/>
                             </Button>
 
                         </StackPanel>
