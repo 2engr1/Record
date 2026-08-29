@@ -1081,19 +1081,83 @@
                             </Grid>
                         </Border>
 
-                        <Border Grid.Row="3"
-                                Margin="0,22,0,0"
-                                Padding="16,12"
-                                Background="#F6F0E4"
-                                BorderBrush="#D7BE9C"
-                                BorderThickness="1"
-                                CornerRadius="12"
-                                VerticalAlignment="Top">
-                            <TextBlock x:Name="ImportStatusTextBlock"
-                                       Text="等待选择账单文件"
-                                       Foreground="{StaticResource MutedBrush}"
-                                       FontSize="12"/>
-                        </Border>
+                        <Grid Grid.Row="3" Margin="0,22,0,0">
+                            <Border x:Name="ImportStatusPanel"
+                                    Padding="16,12"
+                                    Background="#F6F0E4"
+                                    BorderBrush="#D7BE9C"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    VerticalAlignment="Top">
+                                <TextBlock x:Name="ImportStatusTextBlock"
+                                           Text="等待选择账单文件"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="12"/>
+                            </Border>
+
+                            <Border x:Name="ImportPreviewPanel"
+                                    Visibility="Collapsed"
+                                    Padding="16"
+                                    Background="#F6F0E4"
+                                    BorderBrush="#D7BE9C"
+                                    BorderThickness="1"
+                                    CornerRadius="14"
+                                    VerticalAlignment="Top">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border Width="26"
+                                                    Height="26"
+                                                    CornerRadius="9"
+                                                    Background="#DCE7C9">
+                                                <TextBlock Text="✓"
+                                                           Foreground="#526342"
+                                                           FontSize="14"
+                                                           FontWeight="Bold"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </Border>
+                                            <StackPanel Margin="10,0,0,0">
+                                                <TextBlock Text="文件已准备好"
+                                                           Foreground="{StaticResource InkBrush}"
+                                                           FontSize="14"
+                                                           FontWeight="SemiBold"/>
+                                                <TextBlock x:Name="ImportSelectedFileTextBlock"
+                                                           Text="等待文件"
+                                                           Margin="0,3,0,0"
+                                                           Foreground="{StaticResource MutedBrush}"
+                                                           FontSize="11"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                        <TextBlock x:Name="ImportPreviewHintTextBlock"
+                                                   Text="下一步：字段核对"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{StaticResource CoralBrush}"
+                                                   FontSize="12"/>
+                                    </Grid>
+                                    <Grid Grid.Row="1" Margin="0,14,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="已识别：日期 · 说明 · 金额 · 类别"
+                                                   Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="12"
+                                                   VerticalAlignment="Center"/>
+                                        <Button Grid.Column="1"
+                                                Content="进入预览"
+                                                Style="{StaticResource PrimaryButtonStyle}"
+                                                Padding="14,7"
+                                                Click="ImportPreviewButton_Click"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </Grid>
                     </Grid>
                 </Grid>
 
@@ -1153,15 +1217,21 @@
                                            FontSize="12"
                                            VerticalAlignment="Center"
                                            Margin="4,0,12,0"/>
-                                <Button Content="本月"
+                                <Button x:Name="AnalyticsCurrentMonthButton"
+                                        Content="本月"
                                         Style="{StaticResource ActiveFilterChipStyle}"
-                                        Padding="14,6"/>
-                                <Button Content="近三月"
+                                        Padding="14,6"
+                                        Click="AnalyticsCurrentMonthButton_Click"/>
+                                <Button x:Name="AnalyticsLastThreeMonthsButton"
+                                        Content="近三月"
                                         Style="{StaticResource FilterChipStyle}"
-                                        Padding="14,6"/>
-                                <Button Content="今年"
+                                        Padding="14,6"
+                                        Click="AnalyticsLastThreeMonthsButton_Click"/>
+                                <Button x:Name="AnalyticsCurrentYearButton"
+                                        Content="今年"
                                         Style="{StaticResource FilterChipStyle}"
-                                        Padding="14,6"/>
+                                        Padding="14,6"
+                                        Click="AnalyticsCurrentYearButton_Click"/>
                             </StackPanel>
                         </Border>
 
@@ -1460,30 +1530,74 @@
                                 BorderBrush="{StaticResource LineBrush}"
                                 BorderThickness="1"
                                 CornerRadius="14">
-                            <StackPanel Orientation="Horizontal"
-                                        VerticalAlignment="Center">
-                                <TextBlock Text="快速筛选"
-                                           Foreground="{StaticResource MutedBrush}"
-                                           FontSize="12"
-                                           VerticalAlignment="Center"
-                                           Margin="4,0,8,0"/>
-                                <Button x:Name="AllRecordsFilterButton"
-                                        Content="全部"
-                                        Style="{StaticResource ActiveFilterChipStyle}"
-                                        Click="AllRecordsFilterButton_Click"/>
-                                <Button x:Name="CurrentMonthFilterButton"
-                                        Content="本月"
-                                        Style="{StaticResource FilterChipStyle}"
-                                        Click="CurrentMonthFilterButton_Click"/>
-                                <Button x:Name="ExpenseFilterButton"
-                                        Content="支出"
-                                        Style="{StaticResource FilterChipStyle}"
-                                        Click="ExpenseFilterButton_Click"/>
-                                <Button x:Name="IncomeFilterButton"
-                                        Content="收入"
-                                        Style="{StaticResource FilterChipStyle}"
-                                        Click="IncomeFilterButton_Click"/>
-                            </StackPanel>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                                    <TextBlock Text="快速筛选"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"
+                                               Margin="4,0,8,0"/>
+                                    <Button x:Name="AllRecordsFilterButton"
+                                            Content="全部"
+                                            Style="{StaticResource ActiveFilterChipStyle}"
+                                            Click="AllRecordsFilterButton_Click"/>
+                                    <Button x:Name="CurrentMonthFilterButton"
+                                            Content="本月"
+                                            Style="{StaticResource FilterChipStyle}"
+                                            Click="CurrentMonthFilterButton_Click"/>
+                                    <Button x:Name="ExpenseFilterButton"
+                                            Content="支出"
+                                            Style="{StaticResource FilterChipStyle}"
+                                            Click="ExpenseFilterButton_Click"/>
+                                    <Button x:Name="IncomeFilterButton"
+                                            Content="收入"
+                                            Style="{StaticResource FilterChipStyle}"
+                                            Click="IncomeFilterButton_Click"/>
+                                </StackPanel>
+                                <StackPanel Grid.Row="1"
+                                            Orientation="Horizontal"
+                                            Margin="0,8,0,0">
+                                    <TextBlock Text="类别"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"
+                                               VerticalAlignment="Center"
+                                               Margin="4,0,8,0"/>
+                                    <Button x:Name="CategoryAllFilterButton"
+                                            Content="全部类别"
+                                            Tag="全部类别"
+                                            Style="{StaticResource ActiveFilterChipStyle}"
+                                            Click="CategoryFilterButton_Click"/>
+                                    <Button x:Name="CategoryFoodFilterButton"
+                                            Content="餐饮"
+                                            Tag="餐饮"
+                                            Style="{StaticResource FilterChipStyle}"
+                                            Click="CategoryFilterButton_Click"/>
+                                    <Button x:Name="CategoryTransportFilterButton"
+                                            Content="交通"
+                                            Tag="交通"
+                                            Style="{StaticResource FilterChipStyle}"
+                                            Click="CategoryFilterButton_Click"/>
+                                    <Button x:Name="CategoryShoppingFilterButton"
+                                            Content="购物"
+                                            Tag="购物"
+                                            Style="{StaticResource FilterChipStyle}"
+                                            Click="CategoryFilterButton_Click"/>
+                                    <Button x:Name="CategorySalaryFilterButton"
+                                            Content="工资"
+                                            Tag="工资"
+                                            Style="{StaticResource FilterChipStyle}"
+                                            Click="CategoryFilterButton_Click"/>
+                                    <Button x:Name="CategoryOtherFilterButton"
+                                            Content="其他"
+                                            Tag="其他"
+                                            Style="{StaticResource FilterChipStyle}"
+                                            Click="CategoryFilterButton_Click"/>
+                                </StackPanel>
+                            </Grid>
                         </Border>
 
                         <Grid Grid.Row="3" Margin="0,24,0,12">

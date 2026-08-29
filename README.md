@@ -2,6 +2,8 @@
 
 Record 是一个面向 Windows 的本地日常记录应用，当前版本聚焦于日常开销记账。
 
+当前仓库同时保留两条实现线：`record_main` 是早期 Python 原型，`Record.Desktop` 是正在开发的 WPF Windows 客户端。两者目前使用独立的本地数据文件，暂不自动同步。
+
 ## 当前功能
 
 - 手动记录收入/支出、日期、金额、类别、说明和支付方式
@@ -12,6 +14,24 @@ Record 是一个面向 Windows 的本地日常记录应用，当前版本聚焦�
 - 数据保存在 `record_main/record.db`，不上传网络
 
 ## 快速开始
+
+### WPF Windows 客户端
+
+在 Windows PowerShell 中执行：
+
+```powershell
+dotnet run --project .\Record.Desktop\Record.Desktop.csproj
+```
+
+WPF 客户端当前将记录保存到 Windows 的本地应用数据目录：
+
+```text
+%LOCALAPPDATA%\Record\records.json
+```
+
+当前版本使用仓储接口封装本地读写，后续可以替换为 SQLite，而不需要修改页面层。
+
+### Python 原型
 
 在 Windows PowerShell 中执行：
 
@@ -45,4 +65,3 @@ git tag v0.1.0
 ```
 
 版本号采用 SemVer：`MAJOR.MINOR.PATCH`。提交建议使用 `feat`、`fix`、`docs` 等前缀，数据库文件已在 `.gitignore` 中排除。
-
