@@ -8,6 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using Microsoft.Win32;
 using Record.Desktop.Data;
+using Record.Desktop.Import;
 using Record.Desktop.Models;
 
 namespace Record.Desktop;
@@ -39,9 +40,13 @@ public partial class MainWindow : Window
 
     public ObservableCollection<RecordEntry> RecentRecords { get; } = new();
 
+    public ObservableCollection<RecordEntry> ImportPreviewRecords { get; } = new();
+
     public ICollectionView RecordsView { get; private set; } = null!;
 
     private readonly IRecordRepository _recordRepository = new JsonRecordRepository();
+    private readonly CsvRecordImporter _csvRecordImporter = new();
+    private readonly List<RecordEntry> _pendingImportRecords = new();
     private RecordFilter _activeRecordFilter = RecordFilter.All;
     private string _selectedCategory = "全部类别";
     private AnalyticsRange _analyticsRange = AnalyticsRange.CurrentMonth;
@@ -120,8 +125,8 @@ public partial class MainWindow : Window
     private void ManualImportButton_Click(object sender, RoutedEventArgs e)
     {
         SelectImportFile(
-            "选择要导入的账单文件",
-            "账单文件 (*.csv;*.xlsx;*.xls)|*.csv;*.xlsx;*.xls|CSV 文件 (*.csv)|*.csv|Excel 文件 (*.xlsx;*.xls)|*.xlsx;*.xls");
+            "选择要导入的 CSV 账单文件",
+            "CSV 文件 (*.csv)|*.csv|所有文件 (*.*)|*.*");
     }
 
     private void SelectImportFile(string title, string filter)
@@ -136,17 +141,58 @@ public partial class MainWindow : Window
 
         if (dialog.ShowDialog(this) == true)
         {
-            var fileName = Path.GetFileName(dialog.FileName);
-            ImportStatusTextBlock.Text = $"已选择：{fileName}";
-            ImportSelectedFileTextBlock.Text = fileName;
-            ImportStatusPanel.Visibility = Visibility.Collapsed;
-            ImportPreviewPanel.Visibility = Visibility.Visible;
+            try
+            {
+                var importedRecords = _csvRecordImporter.Import(dialog.FileName);
+                _pendingImportRecords.Clear();
+                _pendingImportRecords.AddRange(importedRecords);
+                ImportPreviewRecords.Clear();
+                foreach (var record in importedRecords.Take(5))
+                {
+                    ImportPreviewRecords.Add(record);
+                }
+
+                var fileName = Path.GetFileName(dialog.FileName);
+                ImportStatusTextBlock.Text = $"已选择：{fileName}";
+                ImportSelectedFileTextBlock.Text = $"{fileName} · 共识别 {importedRecords.Count} 笔";
+                ImportPreviewHintTextBlock.Text = "请先核对预览内容，再导入到记录明细";
+                ImportPreviewButton.Content = $"导入 {importedRecords.Count} 笔记录";
+                ImportStatusPanel.Visibility = Visibility.Collapsed;
+                ImportPreviewPanel.Visibility = Visibility.Visible;
+            }
+            catch (Exception exception)
+            {
+                ImportPreviewRecords.Clear();
+                _pendingImportRecords.Clear();
+                ImportPreviewPanel.Visibility = Visibility.Collapsed;
+                ImportStatusPanel.Visibility = Visibility.Visible;
+                ImportStatusTextBlock.Text = $"账单读取失败：{exception.Message}";
+            }
         }
     }
 
     private void ImportPreviewButton_Click(object sender, RoutedEventArgs e)
     {
-        ImportPreviewHintTextBlock.Text = "字段预览界面将在解析模块接入后启用";
+        if (_pendingImportRecords.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var record in _pendingImportRecords)
+        {
+            RecentRecords.Insert(0, record);
+        }
+
+        SaveRecords();
+        RecordsView.Refresh();
+        RefreshSummary();
+
+        var importedCount = _pendingImportRecords.Count;
+        _pendingImportRecords.Clear();
+        ImportPreviewRecords.Clear();
+        ImportPreviewPanel.Visibility = Visibility.Collapsed;
+        ImportStatusPanel.Visibility = Visibility.Visible;
+        ImportStatusTextBlock.Text = $"已导入 {importedCount} 笔记录，可以继续选择其他账单";
     }
 
     private void AllRecordsFilterButton_Click(object sender, RoutedEventArgs e)
@@ -180,6 +226,29 @@ public partial class MainWindow : Window
             RefreshSummary();
             UpdateCategoryFilterStyles();
         }
+    }
+
+    private void DeleteRecordButton_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: RecordEntry record })
+        {
+            return;
+        }
+
+        var result = MessageBox.Show(
+            $"确定删除“{record.Description}”这笔记录吗？",
+            "删除记录",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Question);
+        if (result != MessageBoxResult.Yes)
+        {
+            return;
+        }
+
+        RecentRecords.Remove(record);
+        SaveRecords();
+        RecordsView.Refresh();
+        RefreshSummary();
     }
 
     private void MainWindow_Loaded(object sender, RoutedEventArgs e)
