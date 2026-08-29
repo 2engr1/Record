@@ -161,6 +161,40 @@
             </Setter>
         </Style>
 
+        <!-- 账单搜索框：使用主题边框和焦点色，避免系统默认蓝色高亮 -->
+        <Style x:Key="RecordSearchTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Foreground" Value="{StaticResource InkBrush}"/>
+            <Setter Property="Background" Value="#FFFBF4"/>
+            <Setter Property="BorderBrush" Value="{StaticResource LineBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="32,0,10,0"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="SearchBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="10">
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                          Margin="{TemplateBinding Padding}"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                                <Setter TargetName="SearchBorder"
+                                        Property="BorderBrush"
+                                        Value="{StaticResource GoldBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- 明细表格：GridView 使用同一组列定义，保证表头和每一行严格对齐 -->
         <Style x:Key="RecordsGridViewHeaderStyle" TargetType="GridViewColumnHeader">
             <Setter Property="Background" Value="Transparent"/>
@@ -845,59 +879,89 @@
                                     BorderThickness="1"
                                     CornerRadius="18"
                                     Padding="18"
+                                    MinHeight="286"
                                     VerticalAlignment="Top">
-                            <ListView x:Name="HomeRecordsListView"
-                                      ItemsSource="{Binding RecentRecords}"
-                                      Style="{StaticResource RecordsListViewStyle}"
-                                      ItemContainerStyle="{StaticResource RecordsListViewItemStyle}"
-                                      SizeChanged="RecordsListView_SizeChanged">
-                                <ListView.View>
-                                    <GridView ColumnHeaderContainerStyle="{StaticResource RecordsGridViewHeaderStyle}">
-                                        <GridViewColumn x:Name="HomeDescriptionColumn" Header="说明" Width="195">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Description}"
-                                                               Foreground="{StaticResource InkBrush}"
-                                                               FontSize="14"
-                                                               TextAlignment="Left"
-                                                               TextTrimming="CharacterEllipsis"/>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn x:Name="HomeCategoryColumn" Header="类别" Width="110">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Category}"
-                                                               Foreground="{StaticResource MutedBrush}"
-                                                               FontSize="13"
-                                                               TextAlignment="Left"/>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn x:Name="HomeDateColumn" Header="日期" Width="95">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding DisplayDate}"
-                                                               Foreground="{StaticResource MutedBrush}"
-                                                               FontSize="13"
-                                                               TextAlignment="Left"/>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn x:Name="HomeAmountColumn" Header="金额" Width="135">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding DisplayAmount}"
-                                                               Foreground="{Binding AmountBrush}"
-                                                               FontSize="14"
-                                                               TextAlignment="Left"
-                                                               FontWeight="SemiBold"/>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
+                                <Grid>
+                                    <ListView x:Name="HomeRecordsListView"
+                                              ItemsSource="{Binding RecentRecordsView}"
+                                              Style="{StaticResource RecordsListViewStyle}"
+                                              ItemContainerStyle="{StaticResource RecordsListViewItemStyle}"
+                                              SizeChanged="RecordsListView_SizeChanged">
+                                        <ListView.View>
+                                            <GridView ColumnHeaderContainerStyle="{StaticResource RecordsGridViewHeaderStyle}">
+                                                <GridViewColumn x:Name="HomeDescriptionColumn" Header="说明" Width="195">
+                                                    <GridViewColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Description}"
+                                                                       Foreground="{StaticResource InkBrush}"
+                                                                       FontSize="14"
+                                                                       TextAlignment="Left"
+                                                                       TextTrimming="CharacterEllipsis"/>
+                                                        </DataTemplate>
+                                                    </GridViewColumn.CellTemplate>
+                                                </GridViewColumn>
+                                                <GridViewColumn x:Name="HomeCategoryColumn" Header="类别" Width="110">
+                                                    <GridViewColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Category}"
+                                                                       Foreground="{StaticResource MutedBrush}"
+                                                                       FontSize="13"
+                                                                       TextAlignment="Left"/>
+                                                        </DataTemplate>
+                                                    </GridViewColumn.CellTemplate>
+                                                </GridViewColumn>
+                                                <GridViewColumn x:Name="HomeDateColumn" Header="日期" Width="95">
+                                                    <GridViewColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding DisplayDate}"
+                                                                       Foreground="{StaticResource MutedBrush}"
+                                                                       FontSize="13"
+                                                                       TextAlignment="Left"/>
+                                                        </DataTemplate>
+                                                    </GridViewColumn.CellTemplate>
+                                                </GridViewColumn>
+                                                <GridViewColumn x:Name="HomeAmountColumn" Header="金额" Width="135">
+                                                    <GridViewColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding DisplayAmount}"
+                                                                       Foreground="{Binding AmountBrush}"
+                                                                       FontSize="14"
+                                                                       TextAlignment="Left"
+                                                                       FontWeight="SemiBold"/>
+                                                        </DataTemplate>
+                                                    </GridViewColumn.CellTemplate>
+                                                </GridViewColumn>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                    <StackPanel x:Name="HomeEmptyStatePanel"
+                                                Visibility="Collapsed"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+                                        <Border Width="42"
+                                                Height="42"
+                                                CornerRadius="15"
+                                                Background="#F1E5D3"
+                                                HorizontalAlignment="Center">
+                                            <TextBlock Text="✦"
+                                                       Foreground="{StaticResource GoldBrush}"
+                                                       FontSize="20"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock Text="还没有最近记录"
+                                                   Margin="0,10,0,0"
+                                                   Foreground="{StaticResource InkBrush}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock Text="记下一笔，开始整理生活"
+                                                   Margin="0,4,0,0"
+                                                   Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="11"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                </Grid>
                             </Border>
                             </Grid>
                         </Grid>
@@ -933,24 +997,30 @@
                                            Foreground="{StaticResource MutedBrush}"
                                            FontSize="13"/>
                             </StackPanel>
-                            <Border Grid.Column="1"
-                                    Background="#F1F4E9"
-                                    BorderBrush="#B8C78D"
-                                    BorderThickness="1"
-                                    CornerRadius="12"
-                                    Padding="12,8"
-                                    VerticalAlignment="Center">
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="8"
-                                             Height="8"
-                                             Fill="{StaticResource GreenBrush}"
-                                             Margin="0,0,7,0"
-                                             VerticalAlignment="Center"/>
-                                    <TextBlock Text="本地处理，账单不上传"
-                                               Foreground="#526342"
-                                               FontSize="12"/>
-                                </StackPanel>
-                            </Border>
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center">
+                                <Button Content="导出备份"
+                                        Style="{StaticResource LinkButtonStyle}"
+                                        Margin="0,0,16,0"
+                                        Click="ExportRecordsButton_Click"/>
+                                <Border Background="#F1F4E9"
+                                        BorderBrush="#B8C78D"
+                                        BorderThickness="1"
+                                        CornerRadius="12"
+                                        Padding="12,8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Ellipse Width="8"
+                                                 Height="8"
+                                                 Fill="{StaticResource GreenBrush}"
+                                                 Margin="0,0,7,0"
+                                                 VerticalAlignment="Center"/>
+                                        <TextBlock Text="本地处理，账单不上传"
+                                                   Foreground="#526342"
+                                                   FontSize="12"/>
+                                    </StackPanel>
+                                </Border>
+                            </StackPanel>
                         </Grid>
 
                         <Grid Grid.Row="1" Margin="0,28,0,0">
@@ -1412,19 +1482,21 @@
                                             <Line X1="28" Y1="126" X2="480" Y2="126" Stroke="#E4CEB0" StrokeThickness="1"/>
                                             <Line X1="28" Y1="28" X2="28" Y2="126" Stroke="#E4CEB0" StrokeThickness="1"/>
                                             <Line X1="28" Y1="77" X2="480" Y2="77" Stroke="#F0E3D2" StrokeThickness="1" StrokeDashArray="3,4"/>
-                                            <Polyline Points="28,106 100,88 172,96 244,72 316,84 388,60 480,69"
+                                            <Polyline x:Name="AnalyticsExpenseLine"
+                                                      Points="28,106 100,88 172,96 244,72 316,84 388,60 480,69"
                                                       Stroke="{StaticResource CoralBrush}"
                                                       StrokeThickness="3"
                                                       Fill="Transparent"/>
-                                            <Polyline Points="28,92 100,59 172,70 244,42 316,53 388,32 480,46"
+                                            <Polyline x:Name="AnalyticsIncomeLine"
+                                                      Points="28,92 100,59 172,70 244,42 316,53 388,32 480,46"
                                                       Stroke="{StaticResource GreenBrush}"
                                                       StrokeThickness="3"
                                                       Fill="Transparent"/>
-                                            <Ellipse Canvas.Left="474" Canvas.Top="63" Width="10" Height="10" Fill="{StaticResource CoralBrush}"/>
-                                            <Ellipse Canvas.Left="474" Canvas.Top="40" Width="10" Height="10" Fill="{StaticResource GreenBrush}"/>
-                                            <TextBlock Canvas.Left="32" Canvas.Top="130" Text="08-01" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
-                                            <TextBlock Canvas.Left="238" Canvas.Top="130" Text="08-15" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
-                                            <TextBlock Canvas.Left="442" Canvas.Top="130" Text="08-31" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
+                                            <Ellipse x:Name="AnalyticsExpenseEndPoint" Canvas.Left="474" Canvas.Top="63" Width="10" Height="10" Fill="{StaticResource CoralBrush}"/>
+                                            <Ellipse x:Name="AnalyticsIncomeEndPoint" Canvas.Left="474" Canvas.Top="40" Width="10" Height="10" Fill="{StaticResource GreenBrush}"/>
+                                            <TextBlock x:Name="AnalyticsStartDateTextBlock" Canvas.Left="32" Canvas.Top="130" Text="08-01" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
+                                            <TextBlock x:Name="AnalyticsMiddleDateTextBlock" Canvas.Left="238" Canvas.Top="130" Text="08-15" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
+                                            <TextBlock x:Name="AnalyticsEndDateTextBlock" Canvas.Left="442" Canvas.Top="130" Text="08-31" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
                                         </Canvas>
                                     </Viewbox>
                                     <StackPanel Orientation="Horizontal"
@@ -1453,27 +1525,27 @@
                                     <StackPanel Margin="0,38,0,0">
                                         <Grid Margin="0,0,0,10">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
-                                            <TextBlock Text="餐饮" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border Width="112" HorizontalAlignment="Left" Background="{StaticResource CoralBrush}" CornerRadius="4"/></Border>
-                                            <TextBlock Grid.Column="2" Text="52%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
+                                            <TextBlock x:Name="AnalyticsCategory1TextBlock" Text="餐饮" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border x:Name="AnalyticsCategory1Bar" Width="112" HorizontalAlignment="Left" Background="{StaticResource CoralBrush}" CornerRadius="4"/></Border>
+                                            <TextBlock x:Name="AnalyticsCategory1PercentTextBlock" Grid.Column="2" Text="52%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
                                         </Grid>
                                         <Grid Margin="0,0,0,10">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
-                                            <TextBlock Text="交通" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border Width="74" HorizontalAlignment="Left" Background="{StaticResource GoldBrush}" CornerRadius="4"/></Border>
-                                            <TextBlock Grid.Column="2" Text="24%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
+                                            <TextBlock x:Name="AnalyticsCategory2TextBlock" Text="交通" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border x:Name="AnalyticsCategory2Bar" Width="74" HorizontalAlignment="Left" Background="{StaticResource GoldBrush}" CornerRadius="4"/></Border>
+                                            <TextBlock x:Name="AnalyticsCategory2PercentTextBlock" Grid.Column="2" Text="24%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
                                         </Grid>
                                         <Grid Margin="0,0,0,10">
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
-                                            <TextBlock Text="购物" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border Width="54" HorizontalAlignment="Left" Background="#B8C78D" CornerRadius="4"/></Border>
-                                            <TextBlock Grid.Column="2" Text="16%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
+                                            <TextBlock x:Name="AnalyticsCategory3TextBlock" Text="购物" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border x:Name="AnalyticsCategory3Bar" Width="54" HorizontalAlignment="Left" Background="#B8C78D" CornerRadius="4"/></Border>
+                                            <TextBlock x:Name="AnalyticsCategory3PercentTextBlock" Grid.Column="2" Text="16%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
                                         </Grid>
                                         <Grid>
                                             <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
-                                            <TextBlock Text="其他" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
-                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border Width="28" HorizontalAlignment="Left" Background="#A8B4B2" CornerRadius="4"/></Border>
-                                            <TextBlock Grid.Column="2" Text="8%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
+                                            <TextBlock x:Name="AnalyticsCategory4TextBlock" Text="其他" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border x:Name="AnalyticsCategory4Bar" Width="28" HorizontalAlignment="Left" Background="#A8B4B2" CornerRadius="4"/></Border>
+                                            <TextBlock x:Name="AnalyticsCategory4PercentTextBlock" Grid.Column="2" Text="8%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
                                         </Grid>
                                     </StackPanel>
                                 </Grid>
@@ -1494,11 +1566,12 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel>
-                                    <TextBlock Text="预算进度"
+                                    <TextBlock Text="本期收支概览"
                                                Foreground="{StaticResource InkBrush}"
                                                FontSize="14"
                                                FontWeight="SemiBold"/>
-                                    <TextBlock Text="餐饮预算 · ¥ 850 / ¥ 1,000"
+                                    <TextBlock x:Name="AnalyticsOverviewTextBlock"
+                                               Text="支出 ¥ 0.00 · 收入 ¥ 0.00"
                                                Margin="0,4,0,0"
                                                Foreground="{StaticResource MutedBrush}"
                                                FontSize="11"/>
@@ -1509,14 +1582,16 @@
                                         Background="#E9DEC9"
                                         CornerRadius="5"
                                         VerticalAlignment="Center">
-                                    <Border Width="210"
+                                    <Border x:Name="AnalyticsOverviewBar"
+                                            Width="0"
                                             HorizontalAlignment="Left"
                                             Background="{StaticResource CoralBrush}"
                                             CornerRadius="5"/>
                                 </Border>
-                                <TextBlock Grid.Column="2"
-                                           Text="85%"
-                                           Foreground="{StaticResource CoralBrush}"
+                                <TextBlock x:Name="AnalyticsOverviewPercentTextBlock"
+                                           Grid.Column="2"
+                                           Text="暂无数据"
+                                           Foreground="{StaticResource MutedBrush}"
                                            FontSize="13"
                                            FontWeight="SemiBold"
                                            VerticalAlignment="Center"/>
@@ -1622,29 +1697,55 @@
                                     <RowDefinition Height="Auto"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0" Orientation="Horizontal">
-                                    <TextBlock Text="快速筛选"
-                                               Foreground="{StaticResource MutedBrush}"
-                                               FontSize="12"
-                                               VerticalAlignment="Center"
-                                               Margin="4,0,8,0"/>
-                                    <Button x:Name="AllRecordsFilterButton"
-                                            Content="全部"
-                                            Style="{StaticResource ActiveFilterChipStyle}"
-                                            Click="AllRecordsFilterButton_Click"/>
-                                    <Button x:Name="CurrentMonthFilterButton"
-                                            Content="本月"
-                                            Style="{StaticResource FilterChipStyle}"
-                                            Click="CurrentMonthFilterButton_Click"/>
-                                    <Button x:Name="ExpenseFilterButton"
-                                            Content="支出"
-                                            Style="{StaticResource FilterChipStyle}"
-                                            Click="ExpenseFilterButton_Click"/>
-                                    <Button x:Name="IncomeFilterButton"
-                                            Content="收入"
-                                            Style="{StaticResource FilterChipStyle}"
-                                            Click="IncomeFilterButton_Click"/>
-                                </StackPanel>
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                        <TextBlock Text="快速筛选"
+                                                   Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="12"
+                                                   VerticalAlignment="Center"
+                                                   Margin="4,0,8,0"/>
+                                        <Button x:Name="AllRecordsFilterButton"
+                                                Content="全部"
+                                                Style="{StaticResource ActiveFilterChipStyle}"
+                                                Click="AllRecordsFilterButton_Click"/>
+                                        <Button x:Name="CurrentMonthFilterButton"
+                                                Content="本月"
+                                                Style="{StaticResource FilterChipStyle}"
+                                                Click="CurrentMonthFilterButton_Click"/>
+                                        <Button x:Name="ExpenseFilterButton"
+                                                Content="支出"
+                                                Style="{StaticResource FilterChipStyle}"
+                                                Click="ExpenseFilterButton_Click"/>
+                                        <Button x:Name="IncomeFilterButton"
+                                                Content="收入"
+                                                Style="{StaticResource FilterChipStyle}"
+                                                Click="IncomeFilterButton_Click"/>
+                                    </StackPanel>
+                                    <Grid Grid.Column="1"
+                                          Width="220"
+                                          Height="32">
+                                        <TextBox x:Name="RecordSearchTextBox"
+                                                 Style="{StaticResource RecordSearchTextBoxStyle}"
+                                                 TextChanged="RecordSearchTextBox_TextChanged"/>
+                                        <TextBlock Text="⌕"
+                                                   Margin="11,0,0,0"
+                                                   Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="16"
+                                                   VerticalAlignment="Center"
+                                                   IsHitTestVisible="False"/>
+                                        <TextBlock x:Name="RecordSearchPlaceholderTextBlock"
+                                                   Text="搜索说明或支付方式"
+                                                   Margin="32,0,8,0"
+                                                   Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="12"
+                                                   VerticalAlignment="Center"
+                                                   IsHitTestVisible="False"/>
+                                    </Grid>
+                                </Grid>
                                 <StackPanel Grid.Row="1"
                                             Orientation="Horizontal"
                                             Margin="0,8,0,0">
@@ -1783,21 +1884,58 @@
                                                                        Foreground="{Binding AmountBrush}"
                                                                        FontSize="14"
                                                                        FontWeight="SemiBold"/>
-                                                            <Button Grid.Column="5"
-                                                                    Tag="{Binding}"
-                                                                    Content="×"
-                                                                    ToolTip="删除记录"
-                                                                    Style="{StaticResource RowActionButtonStyle}"
-                                                                    Click="DeleteRecordButton_Click"
-                                                                    Margin="8,0,0,0"/>
+                                                            <StackPanel Grid.Column="5"
+                                                                        Orientation="Horizontal"
+                                                                        Margin="8,0,0,0">
+                                                                <Button Tag="{Binding}"
+                                                                        Content="✎"
+                                                                        ToolTip="编辑记录"
+                                                                        Style="{StaticResource RowActionButtonStyle}"
+                                                                        Click="EditRecordButton_Click"/>
+                                                                <Button Tag="{Binding}"
+                                                                        Content="×"
+                                                                        ToolTip="删除记录"
+                                                                        Style="{StaticResource RowActionButtonStyle}"
+                                                                        Click="DeleteRecordButton_Click"
+                                                                        Margin="5,0,0,0"/>
+                                                            </StackPanel>
                                                         </Grid>
                                                     </Border>
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </ScrollViewer>
+                                    <StackPanel x:Name="RecordsEmptyStatePanel"
+                                                Visibility="Collapsed"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+                                        <Border Width="44"
+                                                Height="44"
+                                                CornerRadius="16"
+                                                Background="#F1E5D3"
+                                                HorizontalAlignment="Center">
+                                            <TextBlock Text="✦"
+                                                       Foreground="{StaticResource GoldBrush}"
+                                                       FontSize="21"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                        <TextBlock x:Name="RecordsEmptyTitleTextBlock"
+                                                   Text="还没有记账记录"
+                                                   Margin="0,10,0,0"
+                                                   Foreground="{StaticResource InkBrush}"
+                                                   FontSize="14"
+                                                   FontWeight="SemiBold"
+                                                   HorizontalAlignment="Center"/>
+                                        <TextBlock x:Name="RecordsEmptyHintTextBlock"
+                                                   Text="从右上角记下一笔，让生活轨迹慢慢长出来"
+                                                   Margin="0,4,0,0"
+                                                   Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="11"
+                                                   HorizontalAlignment="Center"/>
+                                    </StackPanel>
                                 </Grid>
-                        </Border>
+                            </Border>
                     </Grid>
                     </Grid>
                 </Grid>

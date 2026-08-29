@@ -30,9 +30,19 @@ public sealed class JsonRecordRepository : IRecordRepository
             return Array.Empty<RecordEntry>();
         }
 
-        var json = File.ReadAllText(_filePath);
-        return JsonSerializer.Deserialize<List<RecordEntry>>(json, SerializerOptions)
-               ?? new List<RecordEntry>();
+        try
+        {
+            var json = File.ReadAllText(_filePath);
+            return JsonSerializer.Deserialize<List<RecordEntry>>(json, SerializerOptions)
+                   ?? new List<RecordEntry>();
+        }
+        catch (JsonException exception)
+        {
+            var recoveryPath = CreateRecoveryCopy();
+            throw new InvalidDataException(
+                $"本地记录文件格式损坏，原文件已保留为：{Path.GetFileName(recoveryPath)}。",
+                exception);
+        }
     }
 
     public void Save(IEnumerable<RecordEntry> records)
@@ -45,5 +55,19 @@ public sealed class JsonRecordRepository : IRecordRepository
         var temporaryFilePath = _filePath + ".tmp";
         File.WriteAllText(temporaryFilePath, json);
         File.Move(temporaryFilePath, _filePath, overwrite: true);
+    }
+
+    private string CreateRecoveryCopy()
+    {
+        var recoveryPath = _filePath + $".corrupt-{DateTime.Now:yyyyMMdd-HHmmss}.json";
+        var suffix = 1;
+        while (File.Exists(recoveryPath))
+        {
+            recoveryPath = _filePath + $".corrupt-{DateTime.Now:yyyyMMdd-HHmmss}-{suffix}.json";
+            suffix++;
+        }
+
+        File.Copy(_filePath, recoveryPath);
+        return recoveryPath;
     }
 }
