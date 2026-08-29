@@ -1,16 +1,26 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Microsoft.Win32;
 using Record.Desktop.Models;
 
 namespace Record.Desktop;
 
 public partial class MainWindow : Window
 {
+    private enum AppPage
+    {
+        Home,
+        Records,
+        Import,
+        Analytics
+    }
+
     private enum RecordFilter
     {
         All,
@@ -56,12 +66,51 @@ public partial class MainWindow : Window
 
     private void HomeNavButton_Click(object sender, RoutedEventArgs e)
     {
-        ShowPage(showRecords: false);
+        ShowPage(AppPage.Home);
     }
 
     private void RecordsNavButton_Click(object sender, RoutedEventArgs e)
     {
-        ShowPage(showRecords: true);
+        ShowPage(AppPage.Records);
+    }
+
+    private void ImportNavButton_Click(object sender, RoutedEventArgs e)
+    {
+        ShowPage(AppPage.Import);
+    }
+
+    private void AnalyticsNavButton_Click(object sender, RoutedEventArgs e)
+    {
+        ShowPage(AppPage.Analytics);
+    }
+
+    private void ImportSourceButton_Click(object sender, RoutedEventArgs e)
+    {
+        var sourceName = (sender as Button)?.Tag?.ToString() ?? "账单";
+        SelectImportFile($"选择{sourceName}账单文件", "CSV 文件 (*.csv)|*.csv|所有文件 (*.*)|*.*");
+    }
+
+    private void ManualImportButton_Click(object sender, RoutedEventArgs e)
+    {
+        SelectImportFile(
+            "选择要导入的账单文件",
+            "账单文件 (*.csv;*.xlsx;*.xls)|*.csv;*.xlsx;*.xls|CSV 文件 (*.csv)|*.csv|Excel 文件 (*.xlsx;*.xls)|*.xlsx;*.xls");
+    }
+
+    private void SelectImportFile(string title, string filter)
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = title,
+            Filter = filter,
+            Multiselect = false,
+            CheckFileExists = true
+        };
+
+        if (dialog.ShowDialog(this) == true)
+        {
+            ImportStatusTextBlock.Text = $"已选择：{Path.GetFileName(dialog.FileName)} · 下一步将进行字段预览与核对";
+        }
     }
 
     private void AllRecordsFilterButton_Click(object sender, RoutedEventArgs e)
@@ -148,6 +197,7 @@ public partial class MainWindow : Window
         var monthIncome = monthRecords
             .Where(record => record.IsIncome)
             .Sum(record => record.Amount);
+        var balance = monthIncome - monthExpense;
 
         var visibleRecords = RecentRecords
             .Where(record => IsRecordVisible(record))
@@ -157,6 +207,9 @@ public partial class MainWindow : Window
         TotalIncomeTextBlock.Text = $"¥ {totalIncome:N2}";
         MonthExpenseTextBlock.Text = $"¥ {monthExpense:N2}";
         MonthIncomeTextBlock.Text = $"¥ {monthIncome:N2}";
+        AnalyticsExpenseTextBlock.Text = $"¥ {monthExpense:N2}";
+        AnalyticsIncomeTextBlock.Text = $"¥ {monthIncome:N2}";
+        AnalyticsBalanceTextBlock.Text = $"¥ {balance:N2}";
 
         RecordsCountTextBlock.Text = $"{visibleRecords.Count} 笔";
         RecordsExpenseTextBlock.Text = $"¥ {visibleRecords
@@ -169,17 +222,24 @@ public partial class MainWindow : Window
         var monthText = $"{today:yyyy 年 M 月}";
         MonthExpenseLabelTextBlock.Text = monthText;
         MonthIncomeLabelTextBlock.Text = monthText;
+        AnalyticsPeriodTextBlock.Text = $"本月 · {monthText}";
     }
 
-    private void ShowPage(bool showRecords)
+    private void ShowPage(AppPage page)
     {
-        HomePage.Visibility = showRecords ? Visibility.Collapsed : Visibility.Visible;
-        RecordsPage.Visibility = showRecords ? Visibility.Visible : Visibility.Collapsed;
+        HomePage.Visibility = page == AppPage.Home ? Visibility.Visible : Visibility.Collapsed;
+        RecordsPage.Visibility = page == AppPage.Records ? Visibility.Visible : Visibility.Collapsed;
+        ImportPage.Visibility = page == AppPage.Import ? Visibility.Visible : Visibility.Collapsed;
+        AnalyticsPage.Visibility = page == AppPage.Analytics ? Visibility.Visible : Visibility.Collapsed;
 
         HomeNavButton.Style = (Style)FindResource(
-            showRecords ? "NavButtonStyle" : "ActiveNavButtonStyle");
+            page == AppPage.Home ? "ActiveNavButtonStyle" : "NavButtonStyle");
         RecordsNavButton.Style = (Style)FindResource(
-            showRecords ? "ActiveNavButtonStyle" : "NavButtonStyle");
+            page == AppPage.Records ? "ActiveNavButtonStyle" : "NavButtonStyle");
+        ImportNavButton.Style = (Style)FindResource(
+            page == AppPage.Import ? "ActiveNavButtonStyle" : "NavButtonStyle");
+        AnalyticsNavButton.Style = (Style)FindResource(
+            page == AppPage.Analytics ? "ActiveNavButtonStyle" : "NavButtonStyle");
     }
 
     private void UpdateTableColumnWidths(ListView listView)

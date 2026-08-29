@@ -481,9 +481,11 @@
                                       Stretch="Uniform"/>
                             </Button>
 
-                            <Button Style="{StaticResource NavButtonStyle}"
+                            <Button x:Name="ImportNavButton"
+                                    Style="{StaticResource NavButtonStyle}"
                                     ToolTip="导入"
-                                    AutomationProperties.Name="导入">
+                                    AutomationProperties.Name="导入"
+                                    Click="ImportNavButton_Click">
                                 <Path Data="{StaticResource ImportIcon}"
                                       Stroke="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}},
                                                       Path=Foreground}"
@@ -494,9 +496,11 @@
                                       Stretch="Uniform"/>
                             </Button>
 
-                            <Button Style="{StaticResource NavButtonStyle}"
+                            <Button x:Name="AnalyticsNavButton"
+                                    Style="{StaticResource NavButtonStyle}"
                                     ToolTip="分析"
-                                    AutomationProperties.Name="分析">
+                                    AutomationProperties.Name="分析"
+                                    Click="AnalyticsNavButton_Click">
                                 <Path Data="{StaticResource AnalyticsIcon}"
                                       Fill="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}},
                                                       Path=Foreground}"
@@ -868,6 +872,501 @@
 
                     </Grid>
                 </ScrollViewer>
+
+                <!-- 账单导入页 -->
+                <Grid x:Name="ImportPage"
+                      Visibility="Collapsed"
+                      ClipToBounds="True">
+                    <Grid Margin="34,28,34,34">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="导入中心"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontFamily="Georgia"
+                                           FontSize="30"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="把已有账单带回 Record，整理成自己的生活轨迹"
+                                           Margin="0,6,0,0"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="13"/>
+                            </StackPanel>
+                            <Border Grid.Column="1"
+                                    Background="#F1F4E9"
+                                    BorderBrush="#B8C78D"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="12,8"
+                                    VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="8"
+                                             Height="8"
+                                             Fill="{StaticResource GreenBrush}"
+                                             Margin="0,0,7,0"
+                                             VerticalAlignment="Center"/>
+                                    <TextBlock Text="本地处理，账单不上传"
+                                               Foreground="#526342"
+                                               FontSize="12"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Grid Grid.Row="1" Margin="0,28,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0"
+                                    Margin="0,0,10,0"
+                                    Padding="20"
+                                    Background="#F1F4E9"
+                                    BorderBrush="#B8C78D"
+                                    BorderThickness="1"
+                                    CornerRadius="18">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="48"
+                                            Height="48"
+                                            CornerRadius="16"
+                                            Background="#DCE7C9"
+                                            VerticalAlignment="Top">
+                                        <TextBlock Text="微"
+                                                   Foreground="#526342"
+                                                   FontSize="22"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="14,0,10,0">
+                                        <TextBlock Text="微信账单"
+                                                   Foreground="{StaticResource InkBrush}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock Text="支持微信支付账单 CSV"
+                                                   Margin="0,6,0,0"
+                                                   Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="12"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2"
+                                            Content="选择文件"
+                                            Tag="微信"
+                                            Style="{StaticResource LinkButtonStyle}"
+                                            Click="ImportSourceButton_Click"
+                                            VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    Padding="20"
+                                    Background="#FFF0E8"
+                                    BorderBrush="#EDB09C"
+                                    BorderThickness="1"
+                                    CornerRadius="18">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Border Width="48"
+                                            Height="48"
+                                            CornerRadius="16"
+                                            Background="#F8D5C8"
+                                            VerticalAlignment="Top">
+                                        <TextBlock Text="支"
+                                                   Foreground="#9B5B4A"
+                                                   FontSize="22"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Center"
+                                                   VerticalAlignment="Center"/>
+                                    </Border>
+                                    <StackPanel Grid.Column="1" Margin="14,0,10,0">
+                                        <TextBlock Text="支付宝账单"
+                                                   Foreground="{StaticResource InkBrush}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock Text="支持支付宝账单 CSV"
+                                                   Margin="0,6,0,0"
+                                                   Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="12"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2"
+                                            Content="选择文件"
+                                            Tag="支付宝"
+                                            Style="{StaticResource LinkButtonStyle}"
+                                            Click="ImportSourceButton_Click"
+                                            VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <Border Grid.Row="2"
+                                Margin="0,22,0,0"
+                                Padding="22"
+                                Background="{StaticResource CardBrush}"
+                                BorderBrush="{StaticResource LineBrush}"
+                                BorderThickness="1"
+                                CornerRadius="18">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Grid Grid.Row="0">
+                                    <StackPanel>
+                                        <TextBlock Text="手动导入账单"
+                                                   Foreground="{StaticResource InkBrush}"
+                                                   FontSize="16"
+                                                   FontWeight="SemiBold"/>
+                                        <TextBlock Text="适用于其他来源的 CSV、Excel 文件"
+                                                   Margin="0,5,0,0"
+                                                   Foreground="{StaticResource MutedBrush}"
+                                                   FontSize="12"/>
+                                    </StackPanel>
+                                    <TextBlock Text="① 选择文件  ·  ② 预览核对  ·  ③ 导入记录"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"/>
+                                </Grid>
+                                <Border Grid.Row="1"
+                                        Margin="0,16,0,0"
+                                        Height="104"
+                                        Background="#FFFBF4"
+                                        BorderBrush="{StaticResource LineBrush}"
+                                        BorderThickness="1"
+                                        CornerRadius="12">
+                                    <Grid>
+                                        <Rectangle Margin="1"
+                                                   Stroke="{StaticResource LineBrush}"
+                                                   StrokeThickness="1"
+                                                   StrokeDashArray="5,3"
+                                                   RadiusX="11"
+                                                   RadiusY="11"
+                                                   IsHitTestVisible="False"/>
+                                        <StackPanel HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                            <TextBlock Text="⌁"
+                                                       Foreground="{StaticResource GoldBrush}"
+                                                       FontSize="23"
+                                                       HorizontalAlignment="Center"/>
+                                            <Button Content="选择 CSV / Excel 文件"
+                                                    Style="{StaticResource LinkButtonStyle}"
+                                                    Click="ManualImportButton_Click"
+                                                    FontSize="13"/>
+                                            <TextBlock Text="也可以将文件拖到这里"
+                                                       Margin="0,4,0,0"
+                                                       Foreground="{StaticResource MutedBrush}"
+                                                       FontSize="11"
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="3"
+                                Margin="0,22,0,0"
+                                Padding="16,12"
+                                Background="#F6F0E4"
+                                BorderBrush="#D7BE9C"
+                                BorderThickness="1"
+                                CornerRadius="12"
+                                VerticalAlignment="Top">
+                            <TextBlock x:Name="ImportStatusTextBlock"
+                                       Text="等待选择账单文件"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       FontSize="12"/>
+                        </Border>
+                    </Grid>
+                </Grid>
+
+                <!-- 收支分析页 -->
+                <Grid x:Name="AnalyticsPage"
+                      Visibility="Collapsed"
+                      ClipToBounds="True">
+                    <Grid Margin="34,28,34,34">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="230"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="收支分析"
+                                           Foreground="{StaticResource InkBrush}"
+                                           FontFamily="Georgia"
+                                           FontSize="30"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="从每一笔记录里，看见生活的节奏"
+                                           Margin="0,6,0,0"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="13"/>
+                            </StackPanel>
+                            <Border Grid.Column="1"
+                                    Background="#FFF3E8"
+                                    BorderBrush="#EDB09C"
+                                    BorderThickness="1"
+                                    CornerRadius="12"
+                                    Padding="12,8"
+                                    VerticalAlignment="Center">
+                                <TextBlock x:Name="AnalyticsPeriodTextBlock"
+                                           Text="本月"
+                                           Foreground="#9B5B4A"
+                                           FontSize="12"/>
+                            </Border>
+                        </Grid>
+
+                        <Border Grid.Row="1"
+                                Margin="0,24,0,0"
+                                Padding="10,8"
+                                Background="{StaticResource CardBrush}"
+                                BorderBrush="{StaticResource LineBrush}"
+                                BorderThickness="1"
+                                CornerRadius="14">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="统计范围"
+                                           Foreground="{StaticResource MutedBrush}"
+                                           FontSize="12"
+                                           VerticalAlignment="Center"
+                                           Margin="4,0,12,0"/>
+                                <Button Content="本月"
+                                        Style="{StaticResource ActiveFilterChipStyle}"
+                                        Padding="14,6"/>
+                                <Button Content="近三月"
+                                        Style="{StaticResource FilterChipStyle}"
+                                        Padding="14,6"/>
+                                <Button Content="今年"
+                                        Style="{StaticResource FilterChipStyle}"
+                                        Padding="14,6"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Grid Grid.Row="2" Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0"
+                                    Margin="0,0,8,0"
+                                    Padding="16"
+                                    Background="#FFF0E8"
+                                    BorderBrush="#EDB09C"
+                                    BorderThickness="1"
+                                    CornerRadius="16">
+                                <StackPanel>
+                                    <TextBlock Text="本月支出"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"/>
+                                    <TextBlock x:Name="AnalyticsExpenseTextBlock"
+                                               Text="¥ 0.00"
+                                               Margin="0,6,0,0"
+                                               Foreground="{StaticResource CoralBrush}"
+                                               FontSize="20"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1"
+                                    Margin="8,0"
+                                    Padding="16"
+                                    Background="#F1F4E9"
+                                    BorderBrush="#B8C78D"
+                                    BorderThickness="1"
+                                    CornerRadius="16">
+                                <StackPanel>
+                                    <TextBlock Text="本月收入"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"/>
+                                    <TextBlock x:Name="AnalyticsIncomeTextBlock"
+                                               Text="¥ 0.00"
+                                               Margin="0,6,0,0"
+                                               Foreground="{StaticResource GreenBrush}"
+                                               FontSize="20"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    Margin="8,0,0,0"
+                                    Padding="16"
+                                    Background="#FFF8EE"
+                                    BorderBrush="{StaticResource LineBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="16">
+                                <StackPanel>
+                                    <TextBlock Text="结余"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="12"/>
+                                    <TextBlock x:Name="AnalyticsBalanceTextBlock"
+                                               Text="¥ 0.00"
+                                               Margin="0,6,0,0"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontSize="20"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+
+                        <Grid Grid.Row="3" Margin="0,20,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.45*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0"
+                                    Margin="0,0,10,0"
+                                    Padding="18"
+                                    Background="{StaticResource CardBrush}"
+                                    BorderBrush="{StaticResource LineBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="18">
+                                <Grid>
+                                    <TextBlock Text="收支趋势"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontSize="15"
+                                               FontWeight="SemiBold"/>
+                                    <Viewbox Grid.Row="1"
+                                             Margin="0,12,0,0"
+                                             Stretch="Fill">
+                                        <Canvas Width="500" Height="150">
+                                            <Line X1="28" Y1="126" X2="480" Y2="126" Stroke="#E4CEB0" StrokeThickness="1"/>
+                                            <Line X1="28" Y1="28" X2="28" Y2="126" Stroke="#E4CEB0" StrokeThickness="1"/>
+                                            <Line X1="28" Y1="77" X2="480" Y2="77" Stroke="#F0E3D2" StrokeThickness="1" StrokeDashArray="3,4"/>
+                                            <Polyline Points="28,106 100,88 172,96 244,72 316,84 388,60 480,69"
+                                                      Stroke="{StaticResource CoralBrush}"
+                                                      StrokeThickness="3"
+                                                      Fill="Transparent"/>
+                                            <Polyline Points="28,92 100,59 172,70 244,42 316,53 388,32 480,46"
+                                                      Stroke="{StaticResource GreenBrush}"
+                                                      StrokeThickness="3"
+                                                      Fill="Transparent"/>
+                                            <Ellipse Canvas.Left="474" Canvas.Top="63" Width="10" Height="10" Fill="{StaticResource CoralBrush}"/>
+                                            <Ellipse Canvas.Left="474" Canvas.Top="40" Width="10" Height="10" Fill="{StaticResource GreenBrush}"/>
+                                            <TextBlock Canvas.Left="32" Canvas.Top="130" Text="08-01" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
+                                            <TextBlock Canvas.Left="238" Canvas.Top="130" Text="08-15" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
+                                            <TextBlock Canvas.Left="442" Canvas.Top="130" Text="08-31" Foreground="{StaticResource MutedBrush}" FontSize="10"/>
+                                        </Canvas>
+                                    </Viewbox>
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Top">
+                                        <Ellipse Width="7" Height="7" Fill="{StaticResource CoralBrush}" Margin="0,0,5,0"/>
+                                        <TextBlock Text="支出" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,0,12,0"/>
+                                        <Ellipse Width="7" Height="7" Fill="{StaticResource GreenBrush}" Margin="0,0,5,0"/>
+                                        <TextBlock Text="收入" Foreground="{StaticResource MutedBrush}" FontSize="11"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="1"
+                                    Margin="10,0,0,0"
+                                    Padding="18"
+                                    Background="{StaticResource CardBrush}"
+                                    BorderBrush="{StaticResource LineBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="18">
+                                <Grid>
+                                    <TextBlock Text="支出类别"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontSize="15"
+                                               FontWeight="SemiBold"/>
+                                    <StackPanel Margin="0,38,0,0">
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="餐饮" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border Width="112" HorizontalAlignment="Left" Background="{StaticResource CoralBrush}" CornerRadius="4"/></Border>
+                                            <TextBlock Grid.Column="2" Text="52%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="交通" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border Width="74" HorizontalAlignment="Left" Background="{StaticResource GoldBrush}" CornerRadius="4"/></Border>
+                                            <TextBlock Grid.Column="2" Text="24%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid Margin="0,0,0,10">
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="购物" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border Width="54" HorizontalAlignment="Left" Background="#B8C78D" CornerRadius="4"/></Border>
+                                            <TextBlock Grid.Column="2" Text="16%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions><ColumnDefinition Width="52"/><ColumnDefinition Width="*"/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
+                                            <TextBlock Text="其他" Foreground="{StaticResource MutedBrush}" FontSize="12"/>
+                                            <Border Grid.Column="1" Height="8" Background="#F5E8D8" CornerRadius="4" VerticalAlignment="Center"><Border Width="28" HorizontalAlignment="Left" Background="#A8B4B2" CornerRadius="4"/></Border>
+                                            <TextBlock Grid.Column="2" Text="8%" Foreground="{StaticResource InkBrush}" FontSize="11" HorizontalAlignment="Right"/>
+                                        </Grid>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <Border Grid.Row="4"
+                                Margin="0,20,0,0"
+                                Padding="16"
+                                Background="#F6F0E4"
+                                BorderBrush="#D7BE9C"
+                                BorderThickness="1"
+                                CornerRadius="14">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock Text="预算进度"
+                                               Foreground="{StaticResource InkBrush}"
+                                               FontSize="14"
+                                               FontWeight="SemiBold"/>
+                                    <TextBlock Text="餐饮预算 · ¥ 850 / ¥ 1,000"
+                                               Margin="0,4,0,0"
+                                               Foreground="{StaticResource MutedBrush}"
+                                               FontSize="11"/>
+                                </StackPanel>
+                                <Border Grid.Column="1"
+                                        Height="9"
+                                        Margin="24,0"
+                                        Background="#E9DEC9"
+                                        CornerRadius="5"
+                                        VerticalAlignment="Center">
+                                    <Border Width="210"
+                                            HorizontalAlignment="Left"
+                                            Background="{StaticResource CoralBrush}"
+                                            CornerRadius="5"/>
+                                </Border>
+                                <TextBlock Grid.Column="2"
+                                           Text="85%"
+                                           Foreground="{StaticResource CoralBrush}"
+                                           FontSize="13"
+                                           FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Grid>
 
                 <!-- 记账明细页 -->
                 <Grid x:Name="RecordsPage"
